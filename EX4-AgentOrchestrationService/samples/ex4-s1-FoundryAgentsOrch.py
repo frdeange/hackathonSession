@@ -44,7 +44,7 @@ azure_foundry_deployment = os.getenv("AI_FOUNDRY_DEPLOYMENT_NAME")
 # ---------------------------------------------------------------------
 agents_client = AgentsClient(
      endpoint=azure_foundry_project_endpoint,
-     credential=DefaultAzureCredential()
+     credential=DefaultAzureCredential(exclude_environment_credential=True)
 )
 
 # 3. Create Specialized Agents for Different Functions

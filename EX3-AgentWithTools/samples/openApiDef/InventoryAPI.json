@@ -1,43 +1,52 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Inventory API",
-    "description": "Industrial Inventory Management API - Manages inventory items, stock levels, categories, and reservations for industrial equipment and materials.",
+    "title": "Industrial Inventory Management API",
+    "description": "Azure Function App - Industrial Inventory Management API.\n\nProvides HTTP endpoints for inventory and reservation management operations with CosmosDB integration: managing spare parts, checking stock levels, and creating reservations for industrial equipment and materials.",
     "version": "1.0.0",
     "contact": {
-      "name": "API Support",
-      "email": "support@workshoptools.com"
+      "name": "Kiko de Angel",
+      "email": "frdeange@microsoft.com"
     }
   },
   "servers": [
     {
-      "url": "https://workshoptools-apimfrdeange.azure-api.net/inventoryapi",
-      "description": "Azure API Management - Production"
+      "url": "https://workshoptools-inventory-fwgnbma7g4d5bhbd.swedencentral-01.azurewebsites.net/api",
+      "description": "Azure Functions base URL"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Service health monitoring"
+    },
+    {
+      "name": "Inventory",
+      "description": "Inventory items and stock management"
+    },
+    {
+      "name": "Reservations",
+      "description": "Item reservation management"
     }
   ],
   "paths": {
     "/health": {
       "get": {
-        "summary": "Health Check",
-        "description": "Verifies that the API is running and healthy. Returns a simple status message.",
-        "operationId": "get-health",
         "tags": ["Health"],
+        "operationId": "getHealth",
+        "summary": "Health check",
+        "description": "Returns the health status of the Inventory API service.",
         "responses": {
           "200": {
-            "description": "API is healthy and operational",
+            "description": "Service is healthy",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "healthy"
-                    }
-                  }
+                  "$ref": "#/components/schemas/HealthStatus"
                 },
                 "example": {
-                  "status": "healthy"
+                  "status": "healthy",
+                  "service": "inventory-api"
                 }
               }
             }
@@ -47,13 +56,13 @@
     },
     "/inventory": {
       "get": {
-        "summary": "Get All Inventory Items",
-        "description": "Retrieves a complete list of all inventory items across all categories with their current stock levels, locations, and pricing information.",
-        "operationId": "get-all-inventory",
         "tags": ["Inventory"],
+        "operationId": "getAllInventory",
+        "summary": "Get all inventory items",
+        "description": "Retrieve all items in the inventory with their current stock levels.",
         "responses": {
           "200": {
-            "description": "Successfully retrieved all inventory items",
+            "description": "Successfully retrieved inventory items",
             "content": {
               "application/json": {
                 "schema": {
@@ -62,46 +71,19 @@
                     "$ref": "#/components/schemas/InventoryItem"
                   }
                 },
-                "examples": {
-                  "multipleItems": {
-                    "summary": "Sample inventory items",
-                    "value": [
-                      {
-                        "id": "DRILL-001",
-                        "name": "Pneumatic Drill",
-                        "category": "tools",
-                        "stock_quantity": 15,
-                        "min_stock_level": 5,
-                        "unit_price": 250.00,
-                        "location": "Warehouse A - Shelf 12",
-                        "supplier": "Industrial Tools Inc.",
-                        "last_restocked": "2024-10-15T10:30:00Z"
-                      },
-                      {
-                        "id": "STEEL-001",
-                        "name": "Steel Beam 6m",
-                        "category": "materials",
-                        "stock_quantity": 45,
-                        "min_stock_level": 20,
-                        "unit_price": 180.00,
-                        "location": "Warehouse B - Section 3",
-                        "supplier": "Steel Suppliers Ltd.",
-                        "last_restocked": "2024-10-20T14:00:00Z"
-                      },
-                      {
-                        "id": "WELD-001",
-                        "name": "Welding Electrode Pack",
-                        "category": "consumables",
-                        "stock_quantity": 8,
-                        "min_stock_level": 15,
-                        "unit_price": 45.00,
-                        "location": "Storage Room C - Bin 7",
-                        "supplier": "Weld-Pro Supplies",
-                        "last_restocked": "2024-09-28T09:15:00Z"
-                      }
-                    ]
+                "example": [
+                  {
+                    "item_id": "PART-001",
+                    "name": "Industrial Bearing SKF 6205",
+                    "category": "bearings",
+                    "stock_quantity": 45,
+                    "location": "Warehouse A - Shelf 12",
+                    "min_stock_level": 10,
+                    "unit_price": 25.5,
+                    "supplier": "SKF Industrial Supplies",
+                    "last_updated": "2023-10-15T14:30:00.000000"
                   }
-                }
+                ]
               }
             }
           },
@@ -110,7 +92,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -120,10 +102,10 @@
     },
     "/inventory/low-stock": {
       "get": {
-        "summary": "Get Low Stock Items",
-        "description": "Retrieves all inventory items where the current stock quantity is below or equal to the minimum stock level threshold. Useful for identifying items that need reordering.",
-        "operationId": "get-low-stock-items",
         "tags": ["Inventory"],
+        "operationId": "getLowStockItems",
+        "summary": "Get items with low stock",
+        "description": "Retrieve all items that are at or below their minimum stock level.",
         "responses": {
           "200": {
             "description": "Successfully retrieved low stock items",
@@ -135,35 +117,19 @@
                     "$ref": "#/components/schemas/InventoryItem"
                   }
                 },
-                "examples": {
-                  "lowStockItems": {
-                    "summary": "Items requiring restock",
-                    "value": [
-                      {
-                        "id": "WELD-001",
-                        "name": "Welding Electrode Pack",
-                        "category": "consumables",
-                        "stock_quantity": 8,
-                        "min_stock_level": 15,
-                        "unit_price": 45.00,
-                        "location": "Storage Room C - Bin 7",
-                        "supplier": "Weld-Pro Supplies",
-                        "last_restocked": "2024-09-28T09:15:00Z"
-                      },
-                      {
-                        "id": "PUMP-001",
-                        "name": "Hydraulic Pump",
-                        "category": "machinery",
-                        "stock_quantity": 2,
-                        "min_stock_level": 3,
-                        "unit_price": 850.00,
-                        "location": "Warehouse A - Heavy Equipment Zone",
-                        "supplier": "Hydraulics Corp.",
-                        "last_restocked": "2024-08-10T11:45:00Z"
-                      }
-                    ]
+                "example": [
+                  {
+                    "item_id": "PART-002",
+                    "name": "Deep Groove Ball Bearing 6308",
+                    "category": "bearings",
+                    "stock_quantity": 8,
+                    "min_stock_level": 15,
+                    "location": "Warehouse A - Shelf 05",
+                    "unit_price": 32.0,
+                    "supplier": "SKF Industrial Supplies",
+                    "last_updated": "2023-10-15T14:30:00.000000"
                   }
-                }
+                ]
               }
             }
           },
@@ -172,7 +138,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -182,61 +148,30 @@
     },
     "/inventory/category/{category}": {
       "get": {
-        "summary": "Get Items by Category",
-        "description": "Retrieves all inventory items belonging to a specific category. Available categories: tools, materials, consumables, machinery, safety.",
-        "operationId": "get-items-by-category",
         "tags": ["Inventory"],
+        "operationId": "getItemsByCategory",
+        "summary": "Get items by category",
+        "description": "Retrieve all items belonging to a specific category.",
         "parameters": [
           {
             "name": "category",
             "in": "path",
             "required": true,
-            "description": "The category name to filter by (e.g., tools, materials, consumables, machinery, safety)",
+            "description": "Category name (e.g. bearings, motors, sensors, filters, seals).",
             "schema": {
-              "type": "string",
-              "enum": ["tools", "materials", "consumables", "machinery", "safety"]
-            },
-            "example": "tools"
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved items in the specified category",
+            "description": "Successfully retrieved items in category",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/InventoryItem"
-                  }
-                },
-                "examples": {
-                  "toolsCategory": {
-                    "summary": "Tools category items",
-                    "value": [
-                      {
-                        "id": "DRILL-001",
-                        "name": "Pneumatic Drill",
-                        "category": "tools",
-                        "stock_quantity": 15,
-                        "min_stock_level": 5,
-                        "unit_price": 250.00,
-                        "location": "Warehouse A - Shelf 12",
-                        "supplier": "Industrial Tools Inc.",
-                        "last_restocked": "2024-10-15T10:30:00Z"
-                      },
-                      {
-                        "id": "SAW-001",
-                        "name": "Circular Saw",
-                        "category": "tools",
-                        "stock_quantity": 10,
-                        "min_stock_level": 4,
-                        "unit_price": 320.00,
-                        "location": "Warehouse A - Shelf 14",
-                        "supplier": "Power Tools Direct",
-                        "last_restocked": "2024-10-18T13:20:00Z"
-                      }
-                    ]
                   }
                 }
               }
@@ -247,7 +182,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -257,20 +192,19 @@
     },
     "/inventory/{item_id}": {
       "get": {
-        "summary": "Check Stock for Specific Item",
-        "description": "Retrieves detailed stock information for a specific inventory item by its ID, including availability status and quantity.",
-        "operationId": "get-check-stock",
         "tags": ["Inventory"],
+        "operationId": "checkStock",
+        "summary": "Check stock for a specific item",
+        "description": "Check stock availability for a specific item by its ID.",
         "parameters": [
           {
             "name": "item_id",
             "in": "path",
             "required": true,
-            "description": "The unique identifier of the inventory item",
+            "description": "Unique identifier of the inventory item.",
             "schema": {
               "type": "string"
-            },
-            "example": "DRILL-001"
+            }
           }
         ],
         "responses": {
@@ -281,27 +215,12 @@
                 "schema": {
                   "$ref": "#/components/schemas/StockCheckResponse"
                 },
-                "examples": {
-                  "inStock": {
-                    "summary": "Item in stock",
-                    "value": {
-                      "item_id": "DRILL-001",
-                      "name": "Pneumatic Drill",
-                      "available": true,
-                      "quantity": 15,
-                      "location": "Warehouse A - Shelf 12"
-                    }
-                  },
-                  "lowStock": {
-                    "summary": "Item with low stock",
-                    "value": {
-                      "item_id": "WELD-001",
-                      "name": "Welding Electrode Pack",
-                      "available": true,
-                      "quantity": 8,
-                      "location": "Storage Room C - Bin 7"
-                    }
-                  }
+                "example": {
+                  "item_id": "PART-001",
+                  "available": true,
+                  "stock_quantity": 45,
+                  "location": "Warehouse A - Shelf 12",
+                  "estimated_delivery_days": null
                 }
               }
             }
@@ -311,7 +230,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
                   "error": "Item not found"
@@ -324,7 +243,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -334,66 +253,41 @@
     },
     "/inventory/reserve": {
       "post": {
-        "summary": "Reserve Items",
-        "description": "Creates a reservation for one or more inventory items with specified quantities. Returns a reservation ID that can be used to track the reservation status.",
-        "operationId": "post-reserve-items",
-        "tags": ["Reservations"],
+        "tags": ["Inventory", "Reservations"],
+        "operationId": "reserveItems",
+        "summary": "Reserve items for maintenance",
+        "description": "Reserve inventory items for scheduled maintenance work.\n\nValidates stock availability and creates a reservation document in CosmosDB.",
         "requestBody": {
           "required": true,
-          "description": "Reservation details including item ID, quantity, and requester information",
+          "description": "Reservation request details.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ReservationRequest"
               },
-              "examples": {
-                "singleItemReservation": {
-                  "summary": "Reserve a single item",
-                  "value": {
-                    "item_id": "DRILL-001",
-                    "quantity": 3,
-                    "requested_by": "John Smith",
-                    "purpose": "Construction Project Alpha",
-                    "expected_return_date": "2024-11-15"
-                  }
-                },
-                "multipleItemReservation": {
-                  "summary": "Reserve multiple units",
-                  "value": {
-                    "item_id": "STEEL-001",
-                    "quantity": 10,
-                    "requested_by": "Maria Garcia",
-                    "purpose": "Building Extension Phase 2",
-                    "expected_return_date": "2024-12-01"
-                  }
-                }
+              "example": {
+                "item_id": "PART-001",
+                "quantity": 5,
+                "requested_by": "John Technician",
+                "work_order": "WO-2023-1001"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Reservation created successfully",
+            "description": "Successfully created reservation",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ReservationResponse"
                 },
-                "examples": {
-                  "successfulReservation": {
-                    "summary": "Successful reservation",
-                    "value": {
-                      "reservation_id": "RES-20241102-001",
-                      "item_id": "DRILL-001",
-                      "item_name": "Pneumatic Drill",
-                      "quantity_reserved": 3,
-                      "status": "confirmed",
-                      "created_at": "2024-11-02T21:50:00Z",
-                      "requested_by": "John Smith",
-                      "purpose": "Construction Project Alpha",
-                      "expected_return_date": "2024-11-15"
-                    }
-                  }
+                "example": {
+                  "reservation_id": "RES-20231001-001",
+                  "item_id": "PART-001",
+                  "quantity": 5,
+                  "status": "confirmed",
+                  "reserved_until": "2023-10-22T14:30:00.000000"
                 }
               }
             }
@@ -403,19 +297,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "insufficientStock": {
-                    "summary": "Not enough stock",
+                  "invalidBody": {
+                    "summary": "Invalid request body",
                     "value": {
-                      "error": "Insufficient stock. Available: 2, Requested: 5"
+                      "error": "Invalid request body: <error details>"
                     }
                   },
-                  "invalidQuantity": {
-                    "summary": "Invalid quantity",
+                  "insufficientStock": {
+                    "summary": "Insufficient stock",
                     "value": {
-                      "error": "Quantity must be a positive integer"
+                      "error": "Insufficient stock. Available: 3, Requested: 5"
                     }
                   }
                 }
@@ -427,7 +321,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
                   "error": "Item not found"
@@ -440,7 +334,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -450,13 +344,13 @@
     },
     "/reservations": {
       "get": {
-        "summary": "Get All Reservations",
-        "description": "Retrieves a list of all item reservations in the system, including active, completed, and cancelled reservations.",
-        "operationId": "get-all-reservations",
         "tags": ["Reservations"],
+        "operationId": "getAllReservations",
+        "summary": "Get all active reservations",
+        "description": "Retrieve all active item reservations.",
         "responses": {
           "200": {
-            "description": "Successfully retrieved all reservations",
+            "description": "Successfully retrieved reservations",
             "content": {
               "application/json": {
                 "schema": {
@@ -465,47 +359,15 @@
                     "$ref": "#/components/schemas/ReservationResponse"
                   }
                 },
-                "examples": {
-                  "multipleReservations": {
-                    "summary": "Sample reservations",
-                    "value": [
-                      {
-                        "reservation_id": "RES-20241028-001",
-                        "item_id": "DRILL-001",
-                        "item_name": "Pneumatic Drill",
-                        "quantity_reserved": 2,
-                        "status": "confirmed",
-                        "created_at": "2024-10-28T09:30:00Z",
-                        "requested_by": "Carlos Mendez",
-                        "purpose": "Facility Maintenance",
-                        "expected_return_date": "2024-11-05"
-                      },
-                      {
-                        "reservation_id": "RES-20241030-002",
-                        "item_id": "STEEL-001",
-                        "item_name": "Steel Beam 6m",
-                        "quantity_reserved": 15,
-                        "status": "active",
-                        "created_at": "2024-10-30T14:15:00Z",
-                        "requested_by": "Anna Kowalski",
-                        "purpose": "Bridge Repair Project",
-                        "expected_return_date": "2024-11-20"
-                      },
-                      {
-                        "reservation_id": "RES-20241101-003",
-                        "item_id": "WELD-001",
-                        "item_name": "Welding Electrode Pack",
-                        "quantity_reserved": 5,
-                        "status": "completed",
-                        "created_at": "2024-11-01T11:00:00Z",
-                        "requested_by": "Michael Brown",
-                        "purpose": "Equipment Assembly",
-                        "expected_return_date": "2024-11-02",
-                        "completed_at": "2024-11-02T16:30:00Z"
-                      }
-                    ]
+                "example": [
+                  {
+                    "reservation_id": "RES-20231001-001",
+                    "item_id": "PART-001",
+                    "quantity": 5,
+                    "status": "confirmed",
+                    "reserved_until": "2023-10-22T14:30:00.000000"
                   }
-                }
+                ]
               }
             }
           },
@@ -514,7 +376,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -524,45 +386,35 @@
     },
     "/reservations/{reservation_id}": {
       "get": {
-        "summary": "Get Specific Reservation",
-        "description": "Retrieves detailed information about a specific reservation by its ID.",
-        "operationId": "get-reservation",
         "tags": ["Reservations"],
+        "operationId": "getReservation",
+        "summary": "Get specific reservation",
+        "description": "Retrieve details of a specific reservation.",
         "parameters": [
           {
             "name": "reservation_id",
             "in": "path",
             "required": true,
-            "description": "The unique identifier of the reservation",
+            "description": "Unique identifier of the reservation.",
             "schema": {
               "type": "string"
-            },
-            "example": "RES-20241028-001"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved reservation details",
+            "description": "Successfully retrieved reservation",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ReservationResponse"
                 },
-                "examples": {
-                  "activeReservation": {
-                    "summary": "Active reservation",
-                    "value": {
-                      "reservation_id": "RES-20241028-001",
-                      "item_id": "DRILL-001",
-                      "item_name": "Pneumatic Drill",
-                      "quantity_reserved": 2,
-                      "status": "confirmed",
-                      "created_at": "2024-10-28T09:30:00Z",
-                      "requested_by": "Carlos Mendez",
-                      "purpose": "Facility Maintenance",
-                      "expected_return_date": "2024-11-05"
-                    }
-                  }
+                "example": {
+                  "reservation_id": "RES-20231001-001",
+                  "item_id": "PART-001",
+                  "quantity": 5,
+                  "status": "confirmed",
+                  "reserved_until": "2023-10-22T14:30:00.000000"
                 }
               }
             }
@@ -572,7 +424,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
                   "error": "Reservation not found"
@@ -585,7 +437,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -596,234 +448,179 @@
   },
   "components": {
     "schemas": {
+      "HealthStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "healthy"
+          },
+          "service": {
+            "type": "string",
+            "example": "inventory-api"
+          }
+        }
+      },
       "InventoryItem": {
         "type": "object",
-        "required": ["id", "name", "category", "stock_quantity", "min_stock_level", "unit_price"],
+        "description": "Inventory item stored in CosmosDB.",
         "properties": {
-          "id": {
+          "item_id": {
             "type": "string",
-            "description": "Unique identifier for the inventory item",
-            "example": "DRILL-001"
+            "description": "Unique identifier of the inventory item."
           },
           "name": {
             "type": "string",
-            "description": "Name of the inventory item",
-            "example": "Pneumatic Drill"
+            "description": "Human-readable name of the item."
           },
           "category": {
             "type": "string",
-            "description": "Category classification of the item",
-            "enum": ["tools", "materials", "consumables", "machinery", "safety"],
-            "example": "tools"
+            "description": "Category of the item (bearings, motors, sensors, etc.)."
           },
           "stock_quantity": {
             "type": "integer",
-            "description": "Current quantity in stock",
-            "minimum": 0,
-            "example": 15
+            "format": "int32",
+            "description": "Current quantity in stock."
+          },
+          "location": {
+            "type": "string",
+            "description": "Physical location of the item in the warehouse."
           },
           "min_stock_level": {
             "type": "integer",
-            "description": "Minimum stock level threshold for reordering",
-            "minimum": 0,
-            "example": 5
+            "format": "int32",
+            "description": "Minimum desired stock level before triggering replenishment."
           },
           "unit_price": {
             "type": "number",
-            "format": "float",
-            "description": "Price per unit in USD",
-            "minimum": 0,
-            "example": 250.00
-          },
-          "location": {
-            "type": "string",
-            "description": "Physical storage location",
-            "example": "Warehouse A - Shelf 12"
+            "format": "double",
+            "description": "Unit price of the item."
           },
           "supplier": {
             "type": "string",
-            "description": "Name of the supplier",
-            "example": "Industrial Tools Inc."
+            "description": "Supplier name."
           },
-          "last_restocked": {
+          "last_updated": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp of the last restock operation",
-            "example": "2024-10-15T10:30:00Z"
+            "description": "Last time the item record was updated."
           }
-        }
+        },
+        "required": [
+          "item_id",
+          "name",
+          "category",
+          "stock_quantity"
+        ]
       },
       "StockCheckResponse": {
         "type": "object",
-        "required": ["item_id", "name", "available", "quantity"],
+        "description": "Stock availability information for a specific item.",
         "properties": {
           "item_id": {
-            "type": "string",
-            "description": "Unique identifier of the item",
-            "example": "DRILL-001"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the item",
-            "example": "Pneumatic Drill"
+            "type": "string"
           },
           "available": {
             "type": "boolean",
-            "description": "Whether the item is currently available",
-            "example": true
+            "description": "Indicates if the item has stock available (> 0)."
           },
-          "quantity": {
+          "stock_quantity": {
             "type": "integer",
-            "description": "Current stock quantity",
-            "example": 15
+            "format": "int32"
           },
           "location": {
             "type": "string",
-            "description": "Storage location",
-            "example": "Warehouse A - Shelf 12"
+            "nullable": true,
+            "description": "Location where the item is available. Null if no stock."
+          },
+          "estimated_delivery_days": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "description": "Estimated delivery days when no stock is available. Null otherwise."
           }
-        }
+        },
+        "required": [
+          "item_id",
+          "available",
+          "stock_quantity"
+        ]
       },
       "ReservationRequest": {
         "type": "object",
-        "required": ["item_id", "quantity", "requested_by"],
+        "description": "Request to reserve inventory items for maintenance work.",
         "properties": {
           "item_id": {
             "type": "string",
-            "description": "ID of the item to reserve",
-            "example": "DRILL-001"
+            "description": "ID of the item to reserve."
           },
           "quantity": {
             "type": "integer",
-            "description": "Number of units to reserve",
-            "minimum": 1,
-            "example": 3
+            "format": "int32",
+            "description": "Quantity to reserve."
           },
           "requested_by": {
             "type": "string",
-            "description": "Name or ID of the person making the reservation",
-            "example": "John Smith"
+            "description": "Person requesting the reservation."
           },
-          "purpose": {
+          "work_order": {
             "type": "string",
-            "description": "Purpose or reason for the reservation",
-            "example": "Construction Project Alpha"
-          },
-          "expected_return_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Expected date when items will be returned",
-            "example": "2024-11-15"
+            "description": "Associated work order number."
           }
-        }
+        },
+        "required": [
+          "item_id",
+          "quantity",
+          "requested_by",
+          "work_order"
+        ]
       },
       "ReservationResponse": {
         "type": "object",
-        "required": ["reservation_id", "item_id", "quantity_reserved", "status", "created_at"],
+        "description": "Reservation details and status.",
         "properties": {
           "reservation_id": {
             "type": "string",
-            "description": "Unique identifier for the reservation",
-            "example": "RES-20241102-001"
+            "description": "Unique identifier of the reservation."
           },
           "item_id": {
-            "type": "string",
-            "description": "ID of the reserved item",
-            "example": "DRILL-001"
+            "type": "string"
           },
-          "item_name": {
-            "type": "string",
-            "description": "Name of the reserved item",
-            "example": "Pneumatic Drill"
-          },
-          "quantity_reserved": {
+          "quantity": {
             "type": "integer",
-            "description": "Number of units reserved",
-            "example": 3
+            "format": "int32"
           },
           "status": {
             "type": "string",
-            "description": "Current status of the reservation",
-            "enum": ["confirmed", "active", "completed", "cancelled"],
-            "example": "confirmed"
+            "description": "Status of the reservation (e.g. confirmed)."
           },
-          "created_at": {
+          "reserved_until": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp when reservation was created",
-            "example": "2024-11-02T21:50:00Z"
-          },
-          "requested_by": {
-            "type": "string",
-            "description": "Person who made the reservation",
-            "example": "John Smith"
-          },
-          "purpose": {
-            "type": "string",
-            "description": "Purpose of the reservation",
-            "example": "Construction Project Alpha"
-          },
-          "expected_return_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Expected return date",
-            "example": "2024-11-15"
-          },
-          "completed_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when reservation was completed (if applicable)",
-            "example": "2024-11-15T16:30:00Z"
+            "description": "Date until which the reservation is valid."
           }
-        }
+        },
+        "required": [
+          "reservation_id",
+          "item_id",
+          "quantity",
+          "status",
+          "reserved_until"
+        ]
       },
-      "Error": {
+      "ErrorResponse": {
         "type": "object",
-        "required": ["error"],
+        "description": "Error response with message.",
         "properties": {
           "error": {
             "type": "string",
-            "description": "Error message describing what went wrong",
-            "example": "Item not found"
+            "description": "Error message."
           }
-        }
-      }
-    },
-    "securitySchemes": {
-      "apiKeyHeader": {
-        "type": "apiKey",
-        "name": "Ocp-Apim-Subscription-Key",
-        "in": "header",
-        "description": "API subscription key for authentication via header"
-      },
-      "apiKeyQuery": {
-        "type": "apiKey",
-        "name": "subscription-key",
-        "in": "query",
-        "description": "API subscription key for authentication via query parameter"
+        },
+        "required": [
+          "error"
+        ]
       }
     }
-  },
-  "security": [
-    {
-      "apiKeyHeader": []
-    },
-    {
-      "apiKeyQuery": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "Health",
-      "description": "API health check endpoints"
-    },
-    {
-      "name": "Inventory",
-      "description": "Inventory item management and queries"
-    },
-    {
-      "name": "Reservations",
-      "description": "Item reservation management"
-    }
-  ]
+  }
 }

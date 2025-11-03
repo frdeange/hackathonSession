@@ -37,7 +37,7 @@ azure_foundry_deployment = os.getenv("AI_FOUNDRY_DEPLOYMENT_NAME")
 # ---------------------------------------------------------------------
 project = AIProjectClient(
     endpoint=azure_foundry_project_endpoint,
-    credential=DefaultAzureCredential()
+    credential=DefaultAzureCredential(exclude_environment_credential=True)
 )
 
 # 4. ChainLit Event Handlers for Interactive Chat

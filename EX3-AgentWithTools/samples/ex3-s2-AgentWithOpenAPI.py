@@ -18,12 +18,15 @@ azure_foundry_deployment = os.getenv("AI_FOUNDRY_DEPLOYMENT_NAME")
 
 # 2. Authentication Setup using DefaultAzureCredential
 # ---------------------------------------------------------------------
+# Exclude environment credentials (Service Principal) to force using Azure CLI (az login)
+credential = DefaultAzureCredential(exclude_environment_credential=True)
+
 # 3. AI Project Client Setup with context manager
 # ---------------------------------------------------------------------
 
 with AIProjectClient(
     endpoint=azure_foundry_project_endpoint,
-    credential=DefaultAzureCredential()
+    credential=credential
 ) as project:
 
     # 4. Create the OpenAPI Tool loading the specification from a local file
@@ -37,9 +40,9 @@ with AIProjectClient(
 
     # Initialize the main OpenAPI tool definition for inventory
     openapi_tool = OpenApiTool(
-        name="get_inventory", 
+        name="Inventory_Tool", 
         spec=openapi_inventory, 
-        description="Retrieve inventory information for a location", 
+        description="Tool to get information about inventory items and process inventory requests.", 
         auth=auth
     )
 

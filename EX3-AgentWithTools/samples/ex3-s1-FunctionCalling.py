@@ -38,7 +38,7 @@ user_functions = {fetch_weather}
 
 project_client = AIProjectClient(
     endpoint=azure_foundry_project_endpoint,
-    credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(exclude_environment_credential=True),
 )
 
 # Initialize the FunctionTool with user-defined functions
