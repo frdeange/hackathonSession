@@ -71,7 +71,7 @@ azure_foundry_deployment = os.getenv("AI_FOUNDRY_DEPLOYMENT_NAME")
 # ---------------------------------------------------------------------
 project = AIProjectClient(
     endpoint=azure_foundry_project_endpoint,
-    credential=DefaultAzureCredential(exclude_environment_credential=True)
+    credential=DefaultAzureCredential()
 )
 
 # 4. Agent Creation

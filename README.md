@@ -98,63 +98,67 @@
 </div>
 
 ### 🔧 **EX3: AgentWithTools** → *Empower with Tools*
-**🕒 Duration:** 45 minutes | **📊 Difficulty:** Intermediate
+**🕒 Duration:** 60 minutes | **📊 Difficulty:** Intermediate to Advanced
 
-<div style="background: #fff9e6; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 10px 0;">
-
-**Enhance Your Agent with Powerful Search Tools**
+**Enhance Your Agent with Powerful Tools and Integrations**
 
 ✅ **What You'll Learn:**
-- Tool integration patterns
-- Interactions between agents and tools
-- Different tool types and use cases
+- Function Calling fundamentals
+- OpenAPI specification integration
+- Model Context Protocol (MCP)
+- Multi-agent collaboration patterns
+- Azure AI Search integration
+- Structured outputs with Pydantic
 
-</div>
+🏆 **4 Challenges Available:**
+- [Function Calling](./EX3-AgentWithTools/challenge/ex3-ch1-FunctionCalling.md) - Tool integration basics
+- [OpenAPI Integration](./EX3-AgentWithTools/challenge/ex3-ch2-OpenAPI.md) - REST API connections
+- [MCP Integration](./EX3-AgentWithTools/challenge/ex3-ch3-MCP.md) - Context protocol
+- [Multi-Agent System](./EX3-AgentWithTools/challenge/ex3-ch4-MultiAgent.md) - Agent collaboration
 
-### 🧠 **EX4: AgentWithMCP** → *Advanced Intelligence*
-**🕒 Duration:** 45 minutes | **📊 Difficulty:** Intermediate to Advanced
+---
 
-<div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545; margin: 10px 0;">
+### 🎼 **EX4: AgentOrchestrationService** → *Coordinate Multiple Agents*
+**🕒 Duration:** 45 minutes | **📊 Difficulty:** Advanced
 
-**Supercharge with Model Context Protocol (MCP)**
-
-✅ **What You'll Learn:**
-- Model Context Protocol fundamentals
-- Advanced context management
-- Memory and state persistence
-- Cross-session intelligence
-
-</div>
-
-### 🎼 **EX5: AgentOrchestrationService** → *Coordinate Multiple Agents*
-**🕒 Duration:** 60 minutes | **📊 Difficulty:** Advanced
-
-<div style="background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #6f42c1; margin: 10px 0;">
-
-**Master Multi-Agent Coordination with AI Agent Service**
+**Master Multi-Agent Coordination with Azure AI Foundry Agents**
 
 ✅ **What You'll Learn:**
-- Multi-agent architecture patterns
-- Service-based orchestration
-- Agent communication protocols
-- Workflow coordination
+- Multi-agent architecture with Azure AI Foundry
+- Agent handoff patterns and orchestration
+- Complex workflow coordination
+- GitHub integration and OpenAPI specs
 
-</div>
+🏆 **Challenge Available:**
+- [Multi-Agent System](./EX4-AgentOrchestrationService/challenge/ex4-ch1-AgentsOrchestration.md) - Coordinated agent workflows
 
-### ⚡ **EX6: AgentOrchestrationSemanticKernel** → *Enterprise Orchestration*
-**🕒 Duration:** 60 minutes | **📊 Difficulty:** Advanced
+---
 
-<div style="background: #fce4ec; padding: 15px; border-radius: 8px; border-left: 4px solid #e83e8c; margin: 10px 0;">
+### ⚡ **EX5: AgentOrchestrationAgentFramework** → *Microsoft Agent Framework*
+**🕒 Duration:** 60 minutes | **📊 Difficulty:** Intermediate to Advanced
 
-**Build Enterprise-Scale Solutions with Semantic Kernel**
+**Build Production-Ready Agents with Microsoft's Open-Source Framework**
 
 ✅ **What You'll Learn:**
-- Semantic Kernel framework
-- Plugin development and integration
-- Advanced orchestration patterns
-- Production-ready architectures
+- Microsoft Agent Framework (Python + .NET)
+- Graph-based workflow orchestration
+- Sequential and conditional agent patterns
+- DevUI for interactive testing
+- MCP (Model Context Protocol) integration
+- WorkflowBuilder and SequentialBuilder patterns
 
-</div>
+📚 **6 Progressive Samples:**
+1. Simple Agent - Basic agent creation fundamentals
+2. Agent DevUI - Interactive web-based testing
+3. Agent with Tools - Function calling integration
+4. Sequential Builder - Linear agent workflows
+5. Workflow Builder - Conditional branching & loops
+6. Workflow DevUI - Visual workflow testing
+
+🏆 **3 Challenges Available:**
+- [Microsoft Learn MCP Agent](./EX5-AgentOrchestrationAgentFramework/challenge/ex5-ch1-MCPAgent.md) - Documentation assistant (30 min)
+- [Customer Service Chatbot](./EX5-AgentOrchestrationAgentFramework/challenge/ex5-ch2-ChatbotPipeline.md) - Sequential pipeline (30 min)
+- [Loan Approval System](./EX5-AgentOrchestrationAgentFramework/challenge/ex5-ch3-LoanApproval.md) - Complex branching (40 min)
 
 ---
 
@@ -231,19 +235,27 @@ cp .env.example .env
 
 ```
 📦 AI Agents Hackathon
-├── 📝 requirements.txt              # Python dependencies
-├── 🎯 EX1-FirstAIChat/             # Foundation: Azure OpenAI basics
-│   ├── 📘 samples/                  # Working examples and demos
-│   ├── 🏆 challenge/                # Hands-on practice exercises
-│   └── 📚 README.md                 # Detailed instructions
-├── 🤖 EX2-FirstAgent/              # Core: AI Agent fundamentals
-│   ├── 📘 samples/                  # Agent examples and integrations
-│   ├── 🏆 challenge/                # Agent development challenges
-│   └── 📚 README.md                 # Agent-specific guidance
-├── 🔧 EX3-AgentWithTools/          # Enhancement: Tool integration
-├── 🧠 EX4-AgentWithMCP/            # Advanced: Context protocols
-├── 🎼 EX5-AgentOrchestrationService/ # Coordination: Multi-agent systems
-└── ⚡ EX6-AgentOrchestrationSemanticKernel/ # Enterprise: Production patterns
+├── 📝 requirements.txt                        # Python dependencies
+├── 🎯 EX1-FirstAIChat/                       # Foundation: Azure OpenAI basics
+│   ├── 📘 samples/                            # Working examples and demos
+│   ├── 🏆 challenge/                          # Hands-on practice exercises
+│   └── 📚 README.md                           # Detailed instructions
+├── 🤖 EX2-FirstAgent/                        # Core: AI Agent fundamentals
+│   ├── 📘 samples/                            # Agent examples and integrations
+│   ├── 🏆 challenge/                          # Agent development challenges
+│   └── 📚 README.md                           # Agent-specific guidance
+├── 🔧 EX3-AgentWithTools/                    # Enhancement: Tools & MCP
+│   ├── 📘 samples/                            # Function calling, OpenAPI, MCP
+│   ├── 🏆 challenge/                          # 4 progressive challenges
+│   └── 📚 README.md                           # Tool integration guide
+├── 🎼 EX4-AgentOrchestrationService/         # Multi-agent: Azure AI Foundry
+│   ├── 📘 samples/                            # Orchestration examples
+│   ├── 🏆 challenge/                          # Multi-agent coordination
+│   └── 📚 README.md                           # Orchestration patterns
+└── ⚡ EX5-AgentOrchestrationAgentFramework/  # Framework: Microsoft Agent Framework
+    ├── 📘 samples/                            # 6 progressive samples
+    ├── 🏆 challenge/                          # 3 comprehensive challenges
+    └── 📚 README.md                           # Framework deep dive
 ```
 
 ---
@@ -257,13 +269,17 @@ cp .env.example .env
 
 ### 🤖 **Intelligent Agents**
 - **Azure AI Foundry Agents** - Enterprise-grade agent platform
-- **Specialized Domain Experts** - Travel, support, and custom advisors
-- **Multi-Modal Capabilities** - Text, search, and tool integration
+- **Microsoft Agent Framework** - Open-source orchestration framework
+- **Specialized Domain Experts** - Travel, finance, support advisors
+- **Multi-Agent Systems** - Coordinated workflows and collaboration
 
 ### 🔧 **Advanced Integrations**
 - **Chainlit Web Interfaces** - Modern, responsive chat UIs
+- **DevUI Interactive Testing** - Browser-based agent visualization
 - **Azure AI Search** - Knowledge base integration
-- **Model Context Protocol** - Advanced context management
+- **Model Context Protocol (MCP)** - Standardized context management
+- **Function Calling & Tools** - External API integrations
+- **Graph-Based Workflows** - Conditional branching and loops
 
 ---
 
@@ -302,8 +318,9 @@ cp .env.example .env
 
 ### 🌐 **External Resources**
 - [Azure AI Foundry Docs](https://docs.microsoft.com/azure/ai-foundry/)
+- [Microsoft Agent Framework](https://github.com/microsoft/agent-framework)
 - [Chainlit Documentation](https://docs.chainlit.io/)
-- [Semantic Kernel Guide](https://learn.microsoft.com/semantic-kernel/)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
 
 </div>
 

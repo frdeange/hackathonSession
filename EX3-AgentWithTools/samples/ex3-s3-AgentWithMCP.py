@@ -24,7 +24,7 @@ mcp_server_label = "github"
 
 project_client = AIProjectClient(
     endpoint=azure_foundry_project_endpoint,
-    credential=DefaultAzureCredential(),
+    credential=DefaultAzureCredential(exclude_environment_credential=True),
 )
 # Initialize agent MCP tool
 mcp_tool = McpTool(

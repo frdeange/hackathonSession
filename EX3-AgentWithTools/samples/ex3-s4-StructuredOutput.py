@@ -66,7 +66,7 @@ class GitHubReposResponse(BaseModel):
 # Using context manager for proper resource management
 with AIProjectClient(
     endpoint=azure_foundry_project_endpoint,
-    credential=DefaultAzureCredential()
+    credential=DefaultAzureCredential(exclude_environment_credential=True)
 ) as project:
 
     # OpenAPI Tool Setup for GitHub Integration
